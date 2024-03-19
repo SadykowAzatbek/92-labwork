@@ -17,7 +17,6 @@ const Register = () => {
     email: '',
     password: '',
     displayName: '',
-    image: null,
   });
 
   const getFieldError = (fieldName: string) => {

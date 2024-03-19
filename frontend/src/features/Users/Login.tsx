@@ -1,10 +1,10 @@
-import React, {FormEvent, useState} from 'react';
+import React, {FormEvent, useEffect, useRef, useState} from 'react';
 import {LoginMutation} from '../../types';
 import {Alert, Avatar, Box, Button, Container, Grid, Link, TextField, Typography} from '@mui/material';
 import {Link as RouterLink, useNavigate} from 'react-router-dom';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import {useAppDispatch, useAppSelector} from '../../App/hooks.ts';
-import {selectLoginError} from './usersSlice.ts';
+import {selectLoginError, selectUser} from './usersSlice.ts';
 import {googleLogin, loginUser} from './usersThunks.ts';
 import {GoogleLogin} from '@react-oauth/google';
 
@@ -12,6 +12,17 @@ const Login = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const error = useAppSelector(selectLoginError);
+  const user = useAppSelector(selectUser);
+
+  const ws = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    ws.current = new WebSocket('ws://localhost:8000/chat');
+
+    ws.current.onclose = () => console.log('ws closed');
+
+
+  }, []);
 
   const [state, setState] = useState<LoginMutation>({
     email: '',
@@ -31,6 +42,12 @@ const Login = () => {
     await dispatch(loginUser(state)).unwrap();
     navigate('/');
   };
+
+  useEffect(() => {
+    if (user && ws.current) {
+      ws.current.send(JSON.stringify({type: 'LOGIN', payload: user.token}));
+    }
+  }, [user]);
 
   const googleLoginHandler = async (credential: string) => {
     await dispatch(googleLogin(credential)).unwrap();

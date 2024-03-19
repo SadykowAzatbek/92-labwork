@@ -7,6 +7,7 @@ import { Alert } from '@mui/material';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx';
 import {useAppSelector} from './App/hooks.ts';
 import {selectUser} from './features/Users/usersSlice.ts';
+import Chat from './features/Chats/Chat.tsx';
 
 function App() {
   const user = useAppSelector(selectUser);
@@ -19,7 +20,7 @@ function App() {
      <Routes>
        <Route path="/" element={
          <ProtectedRoute isAllowed={user && user.role !== ''}>
-           {user && <div>main</div>}
+           {user && <Chat />}
          </ProtectedRoute>
        } />
        <Route path="/register" element={<Register />} />
