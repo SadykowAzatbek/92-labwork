@@ -44,7 +44,7 @@ export interface ChatMessage {
 }
 
 export interface IncomingChatMessage {
-  type: 'MEW_MESSAGE',
+  type: 'NEW_MESSAGE',
   payload: ChatMessage;
   message: string;
 }

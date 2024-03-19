@@ -39,6 +39,7 @@ chatRouter.ws('/', (ws, req) => {
           author: user?.displayName,
           message: parsedMessage.message,
         }};
+
         connection.send(JSON.stringify(msg));
       });
     }

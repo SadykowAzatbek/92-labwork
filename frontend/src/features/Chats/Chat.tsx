@@ -22,22 +22,14 @@ const Chat = () => {
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const fetchUrl = async () => {
-      await dispatch(getUsers());
-    };
-
-    void fetchUrl();
-  }, [dispatch]);
-
-  useEffect(() => {
     ws.current = new WebSocket('ws://localhost:8000/chat');
-
-    ws.current.onclose = () => console.log('ws closed');
 
     ws.current.onmessage = (event) => {
       const decodedMessage = JSON.parse(event.data) as IncomingChatMessage;
 
       setMessages(prevState => [...prevState, decodedMessage.payload]);
+
+      console.log(decodedMessage.payload);
     };
 
     return () => {
@@ -47,16 +39,23 @@ const Chat = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchUrl = async () => {
+      await dispatch(getUsers());
+    };
+
+    void fetchUrl();
+  }, [dispatch]);
+
   const sendMessage = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!ws.current) return;
 
     ws.current.send(JSON.stringify({type: 'SEND_MESSAGE', message: messageText}));
+
+    setMessageText('');
   };
-
-
-  console.log(messages);
 
   return (
     <>
